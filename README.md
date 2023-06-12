@@ -1,1 +1,1 @@
-# Python-Hangman
+A sample Python Hangman application
