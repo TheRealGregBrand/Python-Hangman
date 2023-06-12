@@ -3,10 +3,18 @@ Hangman implementation by Greg Brand
 """
 
 import random
-from words import words
-from hangman_visual import lives_visual_dict
+from hangman_visual import hangman_visual_list
 import string
+from urllib.request import Request, urlopen
+import random
 
+# get list of words
+url="https://svnweb.freebsd.org/csrg/share/dict/words?revision=61569&view=co"
+req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+web_byte = urlopen(req).read()
+webpage = web_byte.decode('utf-8')
+# get first 500 words 
+words = webpage[:500].split("\n")
 
 def get_valid_word(words):
     word = random.choice(words)  # randomly chooses a word
@@ -22,17 +30,17 @@ def hangman():
     alphabet = set(string.ascii_uppercase)
     used_letters = set()  # what the user guesses
 
-    lives = 7
+    guesses = 7
 
     # getting user input
-    while len(word_letters) > 0 and lives > 0:
+    while len(word_letters) > 0 and guesses > 0:
         # letters used
         # ' '.join(['a', 'b', 'cd']) --> 'a b cd'
-        print('You have', lives, 'guesses left and you have used these letters: ', ' '.join(used_letters))
+        print('You have', guesses, 'guesses left and you have used these letters: ', ' '.join(used_letters))
 
         # what current word is (ie W - R D)
         word_list = [letter if letter in used_letters else '-' for letter in word]
-        print(lives_visual_dict[lives])
+        print(hangman_visual_list[guesses])
         print('Current word: ', ' '.join(word_list))
 
         user_letter = input('Guess a letter: ').upper()
@@ -43,7 +51,7 @@ def hangman():
                 print('')
 
             else:
-                lives = lives - 1  # takes away a life if wrong
+                guesses = guesses - 1  # takes away a life if wrong
                 print('\nYour letter,', user_letter, 'is not in the word.')
 
         elif user_letter in used_letters:
